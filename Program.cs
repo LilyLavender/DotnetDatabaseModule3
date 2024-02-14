@@ -38,6 +38,39 @@ if (resp == "1") { // Create data file
     }
     sw.Close();
 } else if (resp == "2") {
-    // TODO: parse data file
+    // Parse data file
 
+    // Check if file exists
+    if (!File.Exists("data.txt")) {
+        Console.WriteLine("data.txt does not exist! You can create one with option 1.");
+    } else {
+        StreamReader sr = new StreamReader("data.txt");
+
+        string? line = "";
+        while ((line = sr.ReadLine()) != null) {
+            
+            // Get a date object from the line.
+            string stringDate = line.Substring(0, line.IndexOf(","));
+            string[] datePartsString = stringDate.Split("/");
+            int[] dateParts = Array.ConvertAll(datePartsString,Int32.Parse);
+            DateTime week = new DateTime(dateParts[2], dateParts[0], dateParts[1]); // I love American date formats 🥳
+            // Print week header
+            Console.WriteLine($"Week of {week:MMM}, {week:dd}, {week:yyyy}");
+
+            // Print lines 2 & 3
+            Console.WriteLine(" Su Mo Tu We Th Fr Sa Tot Avg");
+            Console.WriteLine(" -- -- -- -- -- -- -- --- ---");
+
+            // Print hours
+            string[] hoursString = line.Substring(line.IndexOf(",") + 1).Split("|");
+            int[] hours = Array.ConvertAll(hoursString,Int32.Parse);
+            foreach (int hour in hours) {
+                Console.Write($"{hour,3}");
+            }
+            Console.Write($"{hours.Sum(),4} {hours.Average():F1}\n\n"); // ec
+
+        }
+
+        sr.Close();
+    }
 }
